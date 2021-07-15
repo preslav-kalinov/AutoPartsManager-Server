@@ -1,12 +1,13 @@
 package com.pkalinov.autopartsmgmtserver.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "parts")
-public class Part {
-    public static final long serialVersionUID = 1L;
+public class Part implements Serializable {
+    public static final long serialVersionUID = 2L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +16,7 @@ public class Part {
 
     @Column(name = "name")
     private String name;
-    private static final String nameFormat = "^.{1,1024}$";
+    public static final String nameFormat = "^.{1,1024}$";
 
     @Column(name = "quantity")
     private Long quantity;

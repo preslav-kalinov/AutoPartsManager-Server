@@ -17,20 +17,15 @@ public class Log implements Serializable {
     @Column(name = "incidentTime")
     private Timestamp incidentTime;
 
-    @ManyToOne
-    @JoinColumn(name = "partId")
-    private Part part;
-
     @Column(name = "errorMessage")
     private String errorMessage;
 
     public Log() {
     }//default constructor
 
-    public Log(Long id, Timestamp incidentTime, Part part, String errorMessage) {
+    public Log(Long id, Timestamp incidentTime, String errorMessage) {
         this.id = id;
         this.incidentTime = incidentTime;
-        this.part = part;
         this.errorMessage = errorMessage;
     }
 
@@ -48,14 +43,6 @@ public class Log implements Serializable {
 
     public void setIncidentTime(Timestamp incidentTime) {
         this.incidentTime = incidentTime;
-    }
-
-    public Part getPart() {
-        return part;
-    }
-
-    public void setPart(Part part) {
-        this.part = part;
     }
 
     public String getErrorMessage() {
