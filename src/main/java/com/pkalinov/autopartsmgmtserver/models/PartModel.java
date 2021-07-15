@@ -3,28 +3,18 @@ package com.pkalinov.autopartsmgmtserver.models;
 import java.math.BigDecimal;
 
 public class PartModel {
-    private Long id;
     private String name;
     private Long quantity;
     private BigDecimal price;
     private Long categoryId;
     private Long carId;
 
-    public PartModel(Long id, String name, Long quantity, BigDecimal price, Long categoryId, Long carId) {
-        this.id = id;
+    public PartModel(String name, Long quantity, BigDecimal price, Long categoryId, Long carId) {
         this.name = name;
         this.quantity = quantity;
         this.price = price;
         this.categoryId = categoryId;
         this.carId = carId;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {

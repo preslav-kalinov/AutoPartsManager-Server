@@ -6,6 +6,7 @@ import com.pkalinov.autopartsmgmtserver.entities.Log;
 import com.pkalinov.autopartsmgmtserver.entities.Part;
 import com.pkalinov.autopartsmgmtserver.exceptions.AutoPartsManagerException;
 import com.pkalinov.autopartsmgmtserver.models.PartModel;
+import com.pkalinov.autopartsmgmtserver.models.SaleModel;
 import com.pkalinov.autopartsmgmtserver.repositories.CarRepository;
 import com.pkalinov.autopartsmgmtserver.repositories.CategoryRepository;
 import com.pkalinov.autopartsmgmtserver.repositories.LogRepository;
@@ -38,12 +39,7 @@ public class PartDaoImpl implements PartDao {
 
     @Override
     public Part get(Long id) throws AutoPartsManagerException {
-        if(partRepository.count() == 0) {
-            throw new AutoPartsManagerException(HttpServletResponse.SC_NOT_FOUND, "No parts found");
-        }
-        if(!partRepository.existsById(id)) {
-            throw new AutoPartsManagerException(HttpServletResponse.SC_NOT_FOUND, "Part not found");
-        }
+        this.validatePartId(id);
         return partRepository.findById(id).get();
     }
 
@@ -64,35 +60,54 @@ public class PartDaoImpl implements PartDao {
         return partRepository.save(part);
     }
 
+    private void validatePartId(Long id) throws AutoPartsManagerException {
+        Log log = new Log();
+        if(partRepository.count() == 0) {
+            throw new AutoPartsManagerException(HttpServletResponse.SC_NOT_FOUND, "No parts found");
+        }
+
+        if(id == null) {
+            log.setErrorMessage("ID cannot be empty");
+            logRepository.save(log);
+            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "ID cannot be null");
+        }
+
+        if(!partRepository.existsById(id)) {
+            log.setErrorMessage("This id does not exist: provided " + id);
+            logRepository.save(log);
+            throw new AutoPartsManagerException(HttpServletResponse.SC_NOT_FOUND, "Part not found");
+        }
+    }
+
     private void validatePartData(PartModel p) throws AutoPartsManagerException {
         Log log = new Log();
 
         if(p.getName() == null){
-            log.setErrorMessage("Name cannot be empty: provided " + p.getName());
+            log.setErrorMessage("Name cannot be empty");
             logRepository.save(log);
             throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Name cannot be null");
         }
 
         if(p.getCarId() == null){
-            log.setErrorMessage("Car cannot be empty: provided " + p.getCarId());
+            log.setErrorMessage("Car cannot be empty");
             logRepository.save(log);
             throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Car id cannot be null");
         }
 
         if(p.getCategoryId() == null){
-            log.setErrorMessage("Category cannot be empty: provided " + p.getCategoryId());
+            log.setErrorMessage("Category cannot be empty");
             logRepository.save(log);
             throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Category id cannot be null");
         }
 
         if(p.getQuantity() == null){
-            log.setErrorMessage("Quantity cannot be empty: provided " + p.getQuantity());
+            log.setErrorMessage("Quantity cannot be empty");
             logRepository.save(log);
             throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Quantity cannot be null");
         }
 
         if(p.getPrice() == null){
-            log.setErrorMessage("Price cannot be empty: provided " + p.getPrice());
+            log.setErrorMessage("Price cannot be empty");
             logRepository.save(log);
             throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Price cannot be null");
         }
@@ -149,12 +164,40 @@ public class PartDaoImpl implements PartDao {
     }
 
     @Override
-    public void update(PartModel p) {
-
+    public void update(Long id, PartModel p) throws AutoPartsManagerException {
+        this.validatePartId(id);
+        this.validatePartData(p);
+        Category category = categoryRepository.findById(p.getCategoryId()).get();
+        Car car = carRepository.findById(p.getCarId()).get();
+        Part part = new Part(id, p.getName(), p.getQuantity(), p.getPrice(), category, car);
+        partRepository.save(part);
     }
 
     @Override
-    public void delete(PartModel p) {
+    public void delete(Long id) throws AutoPartsManagerException {
+        this.validatePartId(id);
+        partRepository.deleteById(id);
+    }
 
+    @Override
+    public Part sell(SaleModel sale, Long id) throws AutoPartsManagerException {
+        this.validatePartId(id);
+        Part part = partRepository.findById(id).get();
+        this.validatePartSale(sale, part);
+        Long partQuantity = part.getQuantity();
+        partQuantity -= sale.getSoldQuantity();
+        part.setQuantity(partQuantity);
+        partRepository.save(part);
+        return part;
+    }
+
+    private void validatePartSale(SaleModel sale, Part part) throws AutoPartsManagerException {
+        Long partQuantity = part.getQuantity();
+        Log log = new Log();
+        if(sale.getSoldQuantity() <= 0 || sale.getSoldQuantity() > partQuantity) {
+            log.setErrorMessage("You can buy between 1 and " + partQuantity);
+            logRepository.save(log);
+            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "You can buy between 1 and " + partQuantity);
+        }
     }
 }
