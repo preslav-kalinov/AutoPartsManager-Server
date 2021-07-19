@@ -1,10 +1,14 @@
 package com.pkalinov.autopartsmgmtserver.controllers;
 
 import com.pkalinov.autopartsmgmtserver.dao.PartDao;
+import com.pkalinov.autopartsmgmtserver.entities.Log;
 import com.pkalinov.autopartsmgmtserver.entities.Part;
 import com.pkalinov.autopartsmgmtserver.exceptions.AutoPartsManagerException;
 import com.pkalinov.autopartsmgmtserver.models.PartModel;
 import com.pkalinov.autopartsmgmtserver.models.SaleModel;
+import com.pkalinov.autopartsmgmtserver.repositories.LogRepository;
+import com.pkalinov.autopartsmgmtserver.services.FileService;
+import com.pkalinov.autopartsmgmtserver.services.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,10 +22,16 @@ import java.util.List;
 public class PartsController {
 
     private final PartDao partDao;
+    private final MailService mailService;
+    private final FileService fileService;
+    private final LogRepository logRepository;
 
     @Autowired
-    public PartsController(PartDao partDao) {
+    public PartsController(PartDao partDao, MailService mailService, FileService fileService, LogRepository logRepository) {
         this.partDao = partDao;
+        this.mailService = mailService;
+        this.fileService = fileService;
+        this.logRepository = logRepository;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -56,7 +66,24 @@ public class PartsController {
 
     @RequestMapping(value = "/{partId}/sale", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public ResponseEntity sellPart(@RequestBody SaleModel sale, @PathVariable Long partId) throws AutoPartsManagerException {
+        Log log = new Log();
         Part part = partDao.sell(sale, partId);
+        String mailSubject = "New sale for part ID " + partId;
+        String mailBody = "Dear AutoPartsManagement Admin,\n\nThere has been a successful sale of part ID " + partId + ", " + part.getName() + ", and there are " + part.getQuantity() + " items left of it.\n\nThis is an automated message by AutoPartsManagement Server.";
+        try {
+            mailService.sendSimpleMessage(mailSubject, mailBody);
+
+        } catch (Exception e) {
+            log.setErrorMessage("Cannot send mail: " + e.getMessage());
+            logRepository.save(log);
+        }
+
+        try {
+            fileService.writeToFile("There has been a successful sale of part ID " + partId + ", " + part.getName() + ", and there are " + part.getQuantity() + " items left of it.");
+        } catch (Exception e) {
+            log.setErrorMessage("Cannot write to log: " + e.getMessage());
+            logRepository.save(log);
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(part);
     }
 }

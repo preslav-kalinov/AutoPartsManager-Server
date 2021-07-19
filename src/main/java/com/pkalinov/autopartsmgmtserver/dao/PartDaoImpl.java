@@ -37,12 +37,14 @@ public class PartDaoImpl implements PartDao {
         this.categoryRepository = categoryRepository;
     }
 
+    //operation to get a part by id
     @Override
     public Part get(Long id) throws AutoPartsManagerException {
         this.validatePartId(id);
         return partRepository.findById(id).get();
     }
 
+    //operation to get all parts
     @Override
     public List<Part> getAll() throws AutoPartsManagerException {
         if(partRepository.count() == 0) {
@@ -51,6 +53,7 @@ public class PartDaoImpl implements PartDao {
         return partRepository.findAll();
     }
 
+    //operation to add new part
     @Override
     public Part save(PartModel p) throws AutoPartsManagerException {
         this.validatePartData(p);
@@ -60,6 +63,7 @@ public class PartDaoImpl implements PartDao {
         return partRepository.save(part);
     }
 
+    //checks for the id
     private void validatePartId(Long id) throws AutoPartsManagerException {
         Log log = new Log();
         if(partRepository.count() == 0) {
@@ -81,7 +85,7 @@ public class PartDaoImpl implements PartDao {
 
     private void validatePartData(PartModel p) throws AutoPartsManagerException {
         Log log = new Log();
-
+        //--------checks if the data is null---------
         if(p.getName() == null){
             log.setErrorMessage("Name cannot be empty");
             logRepository.save(log);
@@ -111,6 +115,7 @@ public class PartDaoImpl implements PartDao {
             logRepository.save(log);
             throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Price cannot be null");
         }
+        //---------------------------------------------
 
         Matcher partNameMatcher = Pattern.compile(Part.nameFormat).matcher(p.getName());
 
@@ -163,6 +168,7 @@ public class PartDaoImpl implements PartDao {
         }
     }
 
+    //operation to edit existing part
     @Override
     public void update(Long id, PartModel p) throws AutoPartsManagerException {
         this.validatePartId(id);
@@ -173,12 +179,14 @@ public class PartDaoImpl implements PartDao {
         partRepository.save(part);
     }
 
+    //operation to delete part by id
     @Override
     public void delete(Long id) throws AutoPartsManagerException {
         this.validatePartId(id);
         partRepository.deleteById(id);
     }
 
+    //operation to buy a part
     @Override
     public Part sell(SaleModel sale, Long id) throws AutoPartsManagerException {
         this.validatePartId(id);
@@ -191,6 +199,7 @@ public class PartDaoImpl implements PartDao {
         return part;
     }
 
+    //availability check
     private void validatePartSale(SaleModel sale, Part part) throws AutoPartsManagerException {
         Long partQuantity = part.getQuantity();
         Log log = new Log();
