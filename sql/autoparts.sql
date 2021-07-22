@@ -16,10 +16,27 @@ CREATE TABLE `cars` (
   `model` varchar(1024) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO `cars` (`id`, `brand`, `model`) VALUES
+(1, 'Skoda', 'Octavia '),
+(2, 'Honda', 'Civic'),
+(3, 'Volkswagen', 'Golf'),
+(4, 'Subaru', 'Legacy'),
+(5, 'Peugeot', '307');
+
 CREATE TABLE `categories` (
   `id` bigint(20) NOT NULL,
   `name` varchar(128) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO `categories` (`id`, `name`) VALUES
+(1, 'Braking system'),
+(2, 'Electrical components'),
+(3, 'Engine components'),
+(4, 'Engine cooling system'),
+(5, 'Engine oil system'),
+(6, 'Exhaust system'),
+(7, 'Fuel supply system'),
+(8, 'Suspension and steering systems');
 
 CREATE TABLE `logs` (
   `id` bigint(20) NOT NULL,
@@ -42,7 +59,8 @@ ALTER TABLE `cars`
   ADD UNIQUE KEY `brand` (`brand`,`model`) USING HASH;
 
 ALTER TABLE `categories`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
 
 ALTER TABLE `logs`
   ADD PRIMARY KEY (`id`);
@@ -54,16 +72,16 @@ ALTER TABLE `parts`
 
 
 ALTER TABLE `cars`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 ALTER TABLE `categories`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 ALTER TABLE `logs`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `parts`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 
 ALTER TABLE `parts`
