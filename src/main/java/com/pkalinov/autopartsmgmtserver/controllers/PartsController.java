@@ -1,6 +1,8 @@
 package com.pkalinov.autopartsmgmtserver.controllers;
 
 import com.pkalinov.autopartsmgmtserver.dao.PartDao;
+import com.pkalinov.autopartsmgmtserver.entities.Car;
+import com.pkalinov.autopartsmgmtserver.entities.Category;
 import com.pkalinov.autopartsmgmtserver.entities.Log;
 import com.pkalinov.autopartsmgmtserver.entities.Part;
 import com.pkalinov.autopartsmgmtserver.exceptions.AutoPartsManagerException;
@@ -9,6 +11,7 @@ import com.pkalinov.autopartsmgmtserver.models.SaleModel;
 import com.pkalinov.autopartsmgmtserver.repositories.LogRepository;
 import com.pkalinov.autopartsmgmtserver.services.FileService;
 import com.pkalinov.autopartsmgmtserver.services.MailService;
+import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,6 +47,18 @@ public class PartsController {
     public ResponseEntity getPart(@PathVariable Long partId) throws AutoPartsManagerException {
         Part part = partDao.get(partId);
         return ResponseEntity.status(HttpStatus.OK).body(part);
+    }
+
+    @RequestMapping(value = "/categories", method = RequestMethod.GET)
+    public ResponseEntity getCategories() throws AutoPartsManagerException {
+        List<Category> categoryList = partDao.getAllCategories();
+        return ResponseEntity.status(HttpStatus.OK).body(categoryList);
+    }
+
+    @RequestMapping(value = "/cars", method = RequestMethod.GET)
+    public ResponseEntity getCars() throws AutoPartsManagerException {
+        List<Car> carList = partDao.getAllCars();
+        return ResponseEntity.status(HttpStatus.OK).body(carList);
     }
 
     @RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)

@@ -1,5 +1,7 @@
 package com.pkalinov.autopartsmgmtserver.dao;
 
+import com.pkalinov.autopartsmgmtserver.entities.Car;
+import com.pkalinov.autopartsmgmtserver.entities.Category;
 import com.pkalinov.autopartsmgmtserver.entities.Part;
 import com.pkalinov.autopartsmgmtserver.exceptions.AutoPartsManagerException;
 import com.pkalinov.autopartsmgmtserver.models.PartModel;
@@ -14,4 +16,7 @@ public interface PartDao {
     void update (Long id, PartModel p) throws AutoPartsManagerException;
     void delete (Long id) throws AutoPartsManagerException;
     Part sell(SaleModel sale, Long partId) throws AutoPartsManagerException;
+    List<Category> getAllCategories() throws AutoPartsManagerException;
+    List<Car> getAllCars() throws AutoPartsManagerException;
+
 }

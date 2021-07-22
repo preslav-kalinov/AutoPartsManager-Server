@@ -209,4 +209,18 @@ public class PartDaoImpl implements PartDao {
             throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "You can buy between 1 and " + partQuantity);
         }
     }
+
+    public List<Category> getAllCategories() throws AutoPartsManagerException {
+        if(categoryRepository.count() == 0) {
+            throw new AutoPartsManagerException(HttpServletResponse.SC_NOT_FOUND, "No categories found");
+        }
+        return categoryRepository.findAll();
+    }
+
+    public List<Car> getAllCars() throws AutoPartsManagerException {
+        if(carRepository.count() == 0) {
+            throw new AutoPartsManagerException(HttpServletResponse.SC_NOT_FOUND, "No cars found");
+        }
+        return carRepository.findAll();
+    }
 }
