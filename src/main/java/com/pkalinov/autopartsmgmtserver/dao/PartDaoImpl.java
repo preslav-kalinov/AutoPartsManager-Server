@@ -73,7 +73,7 @@ public class PartDaoImpl implements PartDao {
         if(id == null) {
             log.setErrorMessage("ID cannot be empty");
             logRepository.save(log);
-            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "ID cannot be null");
+            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "ID cannot be empty");
         }
 
         if(!partRepository.existsById(id)) {
@@ -89,31 +89,31 @@ public class PartDaoImpl implements PartDao {
         if(p.getName() == null){
             log.setErrorMessage("Name cannot be empty");
             logRepository.save(log);
-            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Name cannot be null");
+            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Name cannot be empty");
         }
 
         if(p.getCarId() == null){
             log.setErrorMessage("Car cannot be empty");
             logRepository.save(log);
-            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Car id cannot be null");
+            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "You need to choose a car");
         }
 
         if(p.getCategoryId() == null){
             log.setErrorMessage("Category cannot be empty");
             logRepository.save(log);
-            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Category id cannot be null");
+            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "You need to choose part category");
         }
 
         if(p.getQuantity() == null){
             log.setErrorMessage("Quantity cannot be empty");
             logRepository.save(log);
-            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Quantity cannot be null");
+            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Quantity cannot be empty");
         }
 
         if(p.getPrice() == null){
             log.setErrorMessage("Price cannot be empty");
             logRepository.save(log);
-            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Price cannot be null");
+            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Price cannot be empty");
         }
         //---------------------------------------------
 
@@ -123,14 +123,14 @@ public class PartDaoImpl implements PartDao {
         if(!partNameMatcher.matches()){
             log.setErrorMessage("Invalid part name");
             logRepository.save(log);
-            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Part name must be in range 1 to 1024 characters.");
+            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Part name must be between 1 and 1024 characters");
         }
 
         //check for cars existence
         if(carRepository.count() == 0) {
             log.setErrorMessage("No cars found");
             logRepository.save(log);
-            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Cars not found.");
+            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "No cars found");
         }
 
         //check for particular car existence
@@ -144,7 +144,7 @@ public class PartDaoImpl implements PartDao {
         if(categoryRepository.count() == 0){
             log.setErrorMessage("No categories found");
             logRepository.save(log);
-            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Categories not found.");
+            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "No categories found");
         }
 
         //check for particular category existence
