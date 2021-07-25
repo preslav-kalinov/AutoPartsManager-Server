@@ -186,7 +186,7 @@ public class PartDaoImpl implements PartDao {
         partRepository.deleteById(id);
     }
 
-    //operation to buy a part
+    //operation to sell a part
     @Override
     public Part sell(SaleModel sale, Long id) throws AutoPartsManagerException {
         this.validatePartId(id);
@@ -203,10 +203,15 @@ public class PartDaoImpl implements PartDao {
     private void validatePartSale(SaleModel sale, Part part) throws AutoPartsManagerException {
         Long partQuantity = part.getQuantity();
         Log log = new Log();
-        if(sale.getSoldQuantity() <= 0 || sale.getSoldQuantity() > partQuantity) {
-            log.setErrorMessage("You can buy between 1 and " + partQuantity);
+        if(sale.getSoldQuantity() == null){
+            log.setErrorMessage("Sold quantity cannot be empty");
             logRepository.save(log);
-            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "You can buy between 1 and " + partQuantity);
+            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "Sold quantity cannot be empty");
+        }
+        if(sale.getSoldQuantity() <= 0 || sale.getSoldQuantity() > partQuantity) {
+            log.setErrorMessage("You can sell between 1 and " + partQuantity + " of this product");
+            logRepository.save(log);
+            throw new AutoPartsManagerException(HttpServletResponse.SC_BAD_REQUEST, "You can sell between 1 and " + partQuantity + " of this product");
         }
     }
 

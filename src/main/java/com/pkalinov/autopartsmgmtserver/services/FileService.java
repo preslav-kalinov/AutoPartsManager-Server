@@ -16,12 +16,13 @@ public class FileService {
     public void writeToFile(String log) throws IOException {
         Logger logger = Logger.getLogger("AutoPartsManagerLogs");
         FileHandler fileHandler;
-        fileHandler = new FileHandler(filePath);
+        fileHandler = new FileHandler(filePath, true);
         logger.addHandler(fileHandler);
         SimpleFormatter formatter = new SimpleFormatter();
         fileHandler.setFormatter(formatter);
 
         // the following statement is used to log any messages
         logger.info(log);
+        fileHandler.close();
     }
 }
