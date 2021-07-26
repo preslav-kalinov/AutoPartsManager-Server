@@ -11,7 +11,6 @@ import com.pkalinov.autopartsmgmtserver.models.SaleModel;
 import com.pkalinov.autopartsmgmtserver.repositories.LogRepository;
 import com.pkalinov.autopartsmgmtserver.services.FileService;
 import com.pkalinov.autopartsmgmtserver.services.MailService;
-import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

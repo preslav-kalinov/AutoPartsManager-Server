@@ -1,14 +1,11 @@
 package com.pkalinov.autopartsmgmtserver.exceptions;
 
-import org.springframework.http.HttpStatus;
-
 import java.io.Serializable;
 
 public class AutoPartsManagerException extends Exception implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
-    private HttpStatus status;
     private int statusCode;
 
     private String message;
